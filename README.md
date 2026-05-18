@@ -17,10 +17,11 @@ python scrape_search.py --url "https://example.com"
 Show saved patterns:
 
 ```bash
-python scrape_search.py --url "https://example.com" --show-history
+python scrape_search.py --show-history
 ```
 
 ## Notes
 
 - Pattern history is saved in `.regex_pattern_history.json` (last 10 patterns).
 - Add `--ignore-case` for case-insensitive matching.
+- `--url` is required for searches and optional for `--show-history`.

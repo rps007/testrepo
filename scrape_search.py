@@ -5,6 +5,7 @@ import re
 from html.parser import HTMLParser
 from pathlib import Path
 from urllib.request import urlopen
+from urllib.error import URLError, HTTPError
 
 
 HISTORY_FILE = Path(".regex_pattern_history.json")
@@ -58,7 +59,7 @@ def run_search(text, pattern, ignore_case=False):
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Scrape a website and run regex search.")
-    parser.add_argument("--url", required=True, help="Website URL to scrape")
+    parser.add_argument("--url", help="Website URL to scrape")
     parser.add_argument(
         "--pattern",
         help="Regex pattern to search; if omitted you'll be prompted",
@@ -93,15 +94,25 @@ def main():
     if not pattern:
         print("Pattern is required.")
         return
+    if not args.url:
+        print("URL is required unless --show-history is used.")
+        return
 
-    text = fetch_page_text(args.url)
+    try:
+        text = fetch_page_text(args.url)
+    except (URLError, HTTPError, ValueError) as exc:
+        print(f"Failed to fetch URL: {exc}")
+        return
     try:
         matches = run_search(text, pattern, ignore_case=args.ignore_case)
     except re.error as exc:
         print(f"Invalid regex pattern: {exc}")
         return
 
-    save_history(pattern)
+    try:
+        save_history(pattern)
+    except OSError as exc:
+        print(f"Warning: could not save pattern history: {exc}")
     print(f"Found {len(matches)} match(es).")
     for index, match in enumerate(matches, start=1):
         print(f"{index}: {match}")
