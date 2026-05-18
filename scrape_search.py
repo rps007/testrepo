@@ -12,6 +12,7 @@ from urllib.error import URLError, HTTPError
 
 HISTORY_FILE = Path(".regex_pattern_history.json")
 MAX_HISTORY = 10
+REQUEST_TIMEOUT_SECONDS = 30
 
 
 class TextExtractor(HTMLParser):
@@ -29,7 +30,7 @@ class TextExtractor(HTMLParser):
 
 
 def fetch_page_text(url):
-    with urlopen(url, timeout=30) as response:
+    with urlopen(url, timeout=REQUEST_TIMEOUT_SECONDS) as response:
         html = response.read().decode("utf-8", errors="replace")
     parser = TextExtractor()
     parser.feed(html)
@@ -110,7 +111,7 @@ def main():
     try:
         text = fetch_page_text(args.url)
     except socket.timeout:
-        print("Failed to fetch URL: request timed out after 30 seconds.")
+        print(f"Failed to fetch URL: request timed out after {REQUEST_TIMEOUT_SECONDS} seconds.")
         sys.exit(1)
     except (URLError, HTTPError, ValueError) as exc:
         print(f"Failed to fetch URL: {exc}")
