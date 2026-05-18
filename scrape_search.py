@@ -2,6 +2,7 @@
 import argparse
 import json
 import re
+import socket
 import sys
 from html.parser import HTMLParser
 from pathlib import Path
@@ -49,7 +50,7 @@ def save_history(pattern, path=HISTORY_FILE):
     history = [p for p in load_history(path) if p != pattern]
     history.append(pattern)
     history = history[-MAX_HISTORY:]
-    path.write_text(json.dumps(history, indent=2), encoding="utf-8")
+    path.write_text(json.dumps(history), encoding="utf-8")
     return history
 
 
@@ -108,7 +109,7 @@ def main():
 
     try:
         text = fetch_page_text(args.url)
-    except (URLError, HTTPError, ValueError) as exc:
+    except (URLError, HTTPError, TimeoutError, socket.timeout, ValueError) as exc:
         print(f"Failed to fetch URL: {exc}")
         return
     try:
