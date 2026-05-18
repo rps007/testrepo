@@ -2,6 +2,7 @@
 import argparse
 import json
 import re
+import sys
 from html.parser import HTMLParser
 from pathlib import Path
 from urllib.request import urlopen
@@ -27,7 +28,7 @@ class TextExtractor(HTMLParser):
 
 
 def fetch_page_text(url):
-    with urlopen(url) as response:
+    with urlopen(url, timeout=30) as response:
         html = response.read().decode("utf-8", errors="replace")
     parser = TextExtractor()
     parser.feed(html)
@@ -90,7 +91,13 @@ def main():
             print(f"- {pattern}")
         return
 
-    pattern = args.pattern or input("Enter regex pattern: ").strip()
+    if args.pattern:
+        pattern = args.pattern
+    elif sys.stdin.isatty():
+        pattern = input("Enter regex pattern: ").strip()
+    else:
+        print("Pattern is required. Provide it with --pattern in non-interactive mode.")
+        return
     if not pattern:
         print("Pattern is required.")
         return

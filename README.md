@@ -9,6 +9,7 @@ python scrape_search.py --url "https://example.com" --pattern "Example"
 ```
 
 If `--pattern` is omitted, the CLI prompts you to enter one.
+In non-interactive environments, use `--pattern`.
 
 ```bash
 python scrape_search.py --url "https://example.com"
