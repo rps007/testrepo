@@ -109,7 +109,10 @@ def main():
 
     try:
         text = fetch_page_text(args.url)
-    except (URLError, HTTPError, TimeoutError, socket.timeout, ValueError) as exc:
+    except socket.timeout:
+        print("Failed to fetch URL: request timed out after 30 seconds.")
+        sys.exit(1)
+    except (URLError, HTTPError, ValueError) as exc:
         print(f"Failed to fetch URL: {exc}")
         sys.exit(1)
     try:
