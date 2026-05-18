@@ -94,7 +94,7 @@ def main():
 
     if not args.url:
         print("Error: --url is required.")
-        return
+        sys.exit(1)
 
     if args.pattern:
         pattern = args.pattern
@@ -102,21 +102,21 @@ def main():
         pattern = input("Enter regex pattern: ").strip()
     else:
         print("Error: --pattern is required in non-interactive mode.")
-        return
+        sys.exit(1)
     if not pattern:
         print("Error: Pattern cannot be empty.")
-        return
+        sys.exit(1)
 
     try:
         text = fetch_page_text(args.url)
     except (URLError, HTTPError, TimeoutError, socket.timeout, ValueError) as exc:
         print(f"Failed to fetch URL: {exc}")
-        return
+        sys.exit(1)
     try:
         matches = run_search(text, pattern, ignore_case=args.ignore_case)
     except re.error as exc:
         print(f"Invalid regex pattern: {exc}")
-        return
+        sys.exit(1)
 
     try:
         save_history(pattern)
