@@ -93,7 +93,7 @@ def main():
         return
 
     if not args.url:
-        print("URL is required unless --show-history is used.")
+        print("Error: --url is required.")
         return
 
     if args.pattern:
@@ -101,10 +101,10 @@ def main():
     elif sys.stdin.isatty():
         pattern = input("Enter regex pattern: ").strip()
     else:
-        print("Pattern is required. Use --pattern to provide one.")
+        print("Error: --pattern is required in non-interactive mode.")
         return
     if not pattern:
-        print("Pattern is required.")
+        print("Error: Pattern cannot be empty.")
         return
 
     try:
